@@ -50,6 +50,6 @@ rule parse_seeker_output:
     input:
         seeker_out=VIRUS_FP / "seeker" / "{sample}.txt",
     output:
-        parsed_out=VIRUS_FP / "seeker" / "{sample}.out",
+        parsed_out=VIRUS_FP / "seeker" / "{sample}.tsv",
     script:
         "scripts/parse_seeker_output.py"
