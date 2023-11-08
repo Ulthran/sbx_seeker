@@ -4,6 +4,7 @@ import pytest
 import shutil
 import subprocess as sp
 import tempfile
+from pathlib import Path
 
 
 @pytest.fixture
@@ -15,22 +16,6 @@ def setup():
     project_dir = os.path.join(temp_dir, "project/")
 
     sp.check_output(["sunbeam", "init", "--data_fp", reads_fp, project_dir])
-
-    config_fp = os.path.join(project_dir, "sunbeam_config.yml")
-
-    config_str = f"sbx_template: {{example_rule_options: '--number'}}"
-
-    sp.check_output(
-        [
-            "sunbeam",
-            "config",
-            "modify",
-            "-i",
-            "-s",
-            f"{config_str}",
-            f"{config_fp}",
-        ]
-    )
 
     yield temp_dir, project_dir
 
@@ -48,7 +33,7 @@ def run_sunbeam(setup):
             "run",
             "--profile",
             project_dir,
-            "all_template",
+            "all_seeker",
             "--directory",
             temp_dir,
         ]
@@ -56,27 +41,22 @@ def run_sunbeam(setup):
 
     output_fp = os.path.join(project_dir, "sunbeam_output")
 
-    big_file_fp = os.path.join(output_fp, "qc/mush/big_file.txt")
+    long_fp = os.path.join(output_fp, f"virus/seeker/LONG.tsv")
+    short_fp = os.path.join(output_fp, f"virus/seeker/SHORT.tsv")
 
     benchmarks_fp = os.path.join(project_dir, "stats/")
 
-    yield big_file_fp, benchmarks_fp
+    yield long_fp, short_fp, benchmarks_fp
 
 
 def test_full_run(run_sunbeam):
-    big_file_fp, benchmarks_fp = run_sunbeam
+    long_fp, short_fp, benchmarks_fp = run_sunbeam
 
     # Check output
-    assert os.path.exists(big_file_fp)
+    assert os.path.exists(long_fp)
+    assert os.path.exists(short_fp)
 
+    with open(long_fp) as f:
+        assert len(f.readlines()) > 2
 
-def test_benchmarks(run_sunbeam):
-    big_file_fp, benchmarks_fp = run_sunbeam
-
-    filename = os.listdir(benchmarks_fp)[0]
-    with open(os.path.join(benchmarks_fp, filename)) as f:
-        rd = csv.DictReader(f, delimiter="\t")
-        for r in rd:
-            assert (
-                float(r["cpu_time"]) < 0.5
-            ), f"cpu_time for {r['rule']} is higher than 0.5: {r['cpu_time']}"
+    assert os.stat(short_fp).st_size == 0

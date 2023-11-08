@@ -18,7 +18,7 @@ localrules:
 
 rule all_seeker:
     input:
-        QC_FP / "mush" / "big_file.txt",
+        expand(VIRUS_FP / "seeker" / "{sample}.tsv", sample=Samples.keys()),
 
 
 rule filter_contigs:
@@ -27,7 +27,7 @@ rule filter_contigs:
     output:
         contigs=ASSEMBLY_FP / "seeker_filtered" / "{sample}.fa",
     params:
-        min_contig_length=300, # Should be 200 but seeker was complaining with 200+ bp contigs
+        min_contig_length=300,  # Should be 200 but seeker was complaining with 200+ bp contigs
     script:
         "scripts/filter_contigs.py"
 
@@ -38,11 +38,16 @@ rule run_seeker:
     output:
         seeker_out=VIRUS_FP / "seeker" / "{sample}.txt",
     conda:
-        "envs/sbx_seeker_env.yml",
+        "envs/sbx_seeker_env.yml"
     shell:
         """
         pip install seeker
-        predict-metagenome {input.contigs} > {output.seeker_out}
+        if [ -s {input.contigs} ]; then
+            predict-metagenome {input.contigs} > {output.seeker_out}
+        else
+            echo "No contigs found for {wildcards.sample}"
+            touch {output.seeker_out}
+        fi
         """
 
 
