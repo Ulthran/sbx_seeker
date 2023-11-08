@@ -42,7 +42,12 @@ rule run_seeker:
     shell:
         """
         pip install seeker
-        predict-metagenome {input.contigs} > {output.seeker_out}
+        if [ -s {input.contigs} ]; then
+            predict-metagenome {input.contigs} > {output.seeker_out}
+        else
+            echo "No contigs found for {wildcards.sample}"
+            touch {output.seeker_out}
+        fi
         """
 
 
