@@ -23,6 +23,7 @@ jobs:
           sunbeam-version: 'main'
           extension-name: 'Ulthran/sbx_seeker'
           extension-branch-name: ${{ github.head_ref }}
+          other-extensions: 'sunbeam-labs/sbx_virus_id'
 
   test-units:
     name: Run Unittests
