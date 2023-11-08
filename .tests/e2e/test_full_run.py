@@ -41,18 +41,22 @@ def run_sunbeam(setup):
 
     output_fp = os.path.join(project_dir, "sunbeam_output")
 
-    bfrag_out_fp = os.path.join(output_fp, "virus/seeker/PCMP_dummybfragilis.tsv")
+    long_fp = os.path.join(output_fp, f"virus/seeker/LONG.tsv")
+    short_fp = os.path.join(output_fp, f"virus/seeker/SHORT.tsv")
 
     benchmarks_fp = os.path.join(project_dir, "stats/")
 
-    yield bfrag_out_fp, benchmarks_fp
+    yield long_fp, short_fp, benchmarks_fp
 
 
 def test_full_run(run_sunbeam):
-    bfrag_out_fp, benchmarks_fp = run_sunbeam
+    long_fp, short_fp, benchmarks_fp = run_sunbeam
 
     # Check output
-    assert os.path.exists(bfrag_out_fp)
+    assert os.path.exists(long_fp)
+    assert os.path.exists(short_fp)
 
-    with open(bfrag_out_fp, "r") as f:
-        assert "" == f.readlines()
+    with open(long_fp) as f:
+        assert len(f.readlines()) > 2
+
+    assert os.stat(short_fp).st_size == 0
