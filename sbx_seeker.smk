@@ -21,9 +21,6 @@ rule all_seeker:
         expand(VIRUS_FP / "seeker" / "{sample}.tsv", sample=Samples.keys()),
 
 
-
-
-
 rule filter_contigs:
     input:
         contigs=ASSEMBLY_FP / "virus_id_megahit" / "{sample}_asm" / "final.contigs.fa",
