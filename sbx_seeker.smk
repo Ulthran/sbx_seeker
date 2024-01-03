@@ -23,7 +23,7 @@ rule all_seeker:
 
 rule filter_contigs:
     input:
-        contigs=ASSEMBLY_FP / "virus_id_megahit" / "{sample}_asm" / "final.contigs.fa",
+        contigs=ASSEMBLY_FP / "megahit" / "{sample}_asm" / "final.contigs.fa",
     output:
         contigs=ASSEMBLY_FP / "seeker_filtered" / "{sample}.fa",
     params:

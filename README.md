@@ -12,6 +12,8 @@
 
 sbx_seeker is a [sunbeam](https://github.com/sunbeam-labs/sunbeam) extension for discriminating between virus and phage sequences. This pipeline uses [MEGAHIT](https://github.com/voutcn/megahit) for assembly of contigs and [seeker](https://github.com/gussow/seeker) for virus/phage discrimination.
 
+N.B. If using Megahit for assembly, this extension requires also having sbx_assembly installed.
+
 ### Installation
 
 ```
